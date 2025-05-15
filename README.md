@@ -1,10 +1,10 @@
 # ExamTopics Data Miner
 
-[![License](https://img.shields.io/github/license/matteo-campana/examtopics-parse)](LICENSE)
+[![License](https://img.shields.io/github/license/matteo-campana/examtopics-data-miner)](LICENSE)
 [![Python Version](https://img.shields.io/badge/python-3.6%2B-blue)](https://www.python.org/downloads/)
-[![GitHub issues](https://img.shields.io/github/issues/matteo-campana/examtopics-parse)](https://github.com/matteo-campana/examtopics-parse/issues)
-[![GitHub stars](https://img.shields.io/github/stars/matteo-campana/examtopics-parse)](https://github.com/matteo-campana/examtopics-parse/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/matteo-campana/examtopics-parse)](https://github.com/matteo-campana/examtopics-parse/network)
+[![GitHub issues](https://img.shields.io/github/issues/matteo-campana/examtopics-data-miner)](https://github.com/matteo-campana/examtopics-data-miner/issues)
+[![GitHub stars](https://img.shields.io/github/stars/matteo-campana/examtopics-data-miner)](https://github.com/matteo-campana/examtopics-data-miner/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/matteo-campana/examtopics-data-miner)](https://github.com/matteo-campana/examtopics-data-miner/network)
 
 This repository contains a data miner for ExamTopics, a website that provides exam dumps and study materials for various IT certifications. The data miner is designed to scrape exam questions, answers, and other relevant information from the ExamTopics website. The data is then stored in a structured Markdown format for further analysis or use in creating study materials.
 
@@ -20,10 +20,10 @@ This repository contains a data miner for ExamTopics, a website that provides ex
 
 ```bash
 # Clone the repository
-git clone https://github.com/matteo-campana/examtopics-parse.git
+git clone https://github.com/matteo-campana/examtopics-data-miner.git
 
 # Navigate to the project directory
-cd examtopics-parse
+cd examtopics-data-miner
 
 # Install dependencies
 pip install -r requirements.txt
@@ -46,6 +46,6 @@ This tool is provided for educational purposes only. Always respect website term
 
 ## 📊 GitHub Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=matteo-campana/examtopics-parse&type=Date)](https://star-history.com/#matteo-campana/examtopics-parse)
+[![Star History Chart](https://api.star-history.com/svg?repos=matteo-campana/examtopics-data-miner&type=Date)](https://star-history.com/#matteo-campana/examtopics-data-miner)
 
 >Note: The actual badges and star graph will only work when this repository is properly hosted on GitHub with the correct username and repository name. You may need to adjust the URLs to match your actual GitHub repository path.Note: The actual badges and star graph will only work when this repository is properly hosted on GitHub with the correct username and repository name. You may need to adjust the URLs to match your actual GitHub repository path.
