@@ -29,7 +29,10 @@ cd examtopics-data-miner
 pip install -r requirements.txt
 ```
 
-📖 Usage
+## 📖 Usage
+
+See the [USAGE.md](USAGE.md) manual for detailed instructions.
+
 Place your HTML files in the data directory and run the parser:
 
 ```python
