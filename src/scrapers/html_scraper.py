@@ -146,27 +146,52 @@ class HtmlScraper:
         from webdriver_manager.microsoft import EdgeChromiumDriverManager  # type: ignore
         import time
         import os
-        from selenium.webdriver.chrome.options import Options  # type: ignore
-        import json
+        import sys
+        import subprocess
 
         driver = None
         # Detect default browser
         browser_type = self.__get_default_windows_browser()
 
+        # Check if Chrome is running and warn user
+        if browser_type == "chrome":
+            try:
+                # Use tasklist to check for running chrome.exe processes
+                result = subprocess.run(
+                    ["tasklist", "/FI", "IMAGENAME eq chrome.exe"],
+                    capture_output=True,
+                    text=True,
+                )
+                if "chrome.exe" in result.stdout.lower():
+                    print(
+                        "[WARNING] Chrome is currently running. "
+                        "Please close all Chrome windows before continuing, "
+                        "otherwise profile lock errors may occur."
+                    )
+            except Exception:
+                pass
+
         # Initialize the appropriate WebDriver based on default browser
         if browser_type == "chrome":
             chrome_options = ChromeOptions()
-            chrome_profile_path = self.__get_chrome_profile_path()
-            if chrome_profile_path and os.path.exists(chrome_profile_path):
-                chrome_options.add_argument(f"--user-data-dir={chrome_profile_path}")
-                # Use selected profile directory if provided
-                if profile_dir:
-                    chrome_options.add_argument(f"--profile-directory={profile_dir}")
-                chrome_options.add_experimental_option("detach", detach)
-            driver = webdriver.Chrome(
-                service=ChromeService(ChromeDriverManager().install()),
-                options=chrome_options,
-            )
+            import tempfile
+
+            temp_profile = tempfile.mkdtemp()
+            chrome_options.add_argument(f"--user-data-dir={temp_profile}")
+            chrome_options.add_experimental_option("detach", detach)
+
+            try:
+                driver = webdriver.Chrome(
+                    service=ChromeService(ChromeDriverManager().install()),
+                    options=chrome_options,
+                )
+            except Exception as chrome_exc:
+                print("[ERROR] Failed to start ChromeDriver:", chrome_exc)
+                print("Tips:")
+                print("- Ensure all Chrome windows are closed.")
+                print("- Make sure ChromeDriver version matches your installed Chrome.")
+                print("- Try updating both Chrome and ChromeDriver.")
+                raise
         elif browser_type == "firefox":
             driver = webdriver.Firefox(
                 service=FirefoxService(GeckoDriverManager().install())
