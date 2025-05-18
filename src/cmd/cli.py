@@ -8,6 +8,7 @@ from rich.table import Table
 from rich.prompt import Prompt, IntPrompt
 from rich.panel import Panel
 from rich import box
+import re
 
 console = Console()
 
@@ -73,7 +74,24 @@ def execute():
                 default="https://www.examtopics.com/exams/microsoft/az-204/view/",
             )
             html_content = scraper.scrape(url, profile_dir=selected_profile)
-            input_filename = url.split("/")[-1] or "scraped_content"
+            # Build filename based on URL format
+            # Examples:
+            # https://www.examtopics.com/exams/microsoft/az-204/view/      -> az-204.html
+            # https://www.examtopics.com/exams/microsoft/az-204/view/1     -> az-204-1.html
+            # https://www.examtopics.com/exams/microsoft/az-204/view/2     -> az-204-2.html
+            # https://www.examtopics.com/exams/microsoft/az-204/view/3     -> az-204-3.html
+            match = re.search(
+                r"/exams/[^/]+/(?P<exam>[^/]+)/view(?:/(?P<page>\d+))?", url
+            )
+            if match:
+                exam = match.group("exam")
+                page = match.group("page")
+                if page:
+                    input_filename = f"{exam}-{page}.html"
+                else:
+                    input_filename = f"{exam}.html"
+            else:
+                input_filename = "scraped_content.html"
         except Exception as e:
             console.print(
                 "[bold red]Error during Chrome profile selection or scraping:[/bold red]"
@@ -100,6 +118,12 @@ def execute():
     else:
         console.print("[red]Invalid choice[/red]")
         return
+
+    if not html_content:
+        console.print("[red]No HTML content to parse[/red]")
+        return
+
+    console.print(f"[bold blue]Input filename:[/bold blue] {input_filename}")
 
     parser = HtmlParser()
     data = parser.parse(html_content, input_filename=input_filename)
