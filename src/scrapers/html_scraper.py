@@ -209,4 +209,7 @@ class HtmlScraper:
         driver.get(url)
 
         # Wait for initial page to load
-        time.sleep(2)
+        time.sleep(5)
+
+        # Return the page source as HTML content
+        return driver.page_source
