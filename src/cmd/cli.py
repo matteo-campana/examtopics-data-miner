@@ -1,7 +1,9 @@
 from scrapers.html_scraper import HtmlScraper
 from parsers.html_parser import HtmlParser
 from store.data_store import DataStore
+from utils.file_utils import FileUtils
 import os
+from tqdm import tqdm
 
 from rich.console import Console
 from rich.table import Table
@@ -25,10 +27,12 @@ def execute():
     console.print("[bold]Choose input source:[/bold]")
     console.print("[green]1.[/green] URL (web scraping)")
     console.print("[green]2.[/green] Local HTML file")
-    choice = Prompt.ask("Enter your choice", choices=["1", "2"], default="1")
+    console.print("[green]3.[/green] Folder of HTML files")  # New option
+    choice = Prompt.ask("Enter your choice", choices=["1", "2", "3"], default="1")
 
     html_content = None
     input_filename = None
+
     if choice == "1":
         scraper = HtmlScraper()
         try:
@@ -121,6 +125,43 @@ def execute():
         except Exception as e:
             console.print(f"[bold red]Error reading file:[/bold red] {e}")
             return
+    elif choice == "3":
+        folder_path = Prompt.ask(
+            "Enter path to folder with HTML files", default="data/sample_folder"
+        )
+        if not os.path.isdir(folder_path):
+            console.print(f"[bold red]Folder not found:[/bold red] {folder_path}")
+            return
+
+        output_base = "output"
+        # Use the name of the input directory (not just the last folder)
+        input_dir_name = os.path.basename(os.path.normpath(folder_path))
+        output_folder = os.path.join(output_base, input_dir_name)
+        os.makedirs(output_folder, exist_ok=True)
+
+        parser = HtmlParser()
+        processed = 0
+        html_files = [f for f in os.listdir(folder_path) if f.lower().endswith(".html")]
+        for filename in tqdm(html_files, desc="Processing HTML files", unit="file"):
+            file_path = os.path.join(folder_path, filename)
+            try:
+                html_content = DataStore.read_file(file_path)
+                data = parser.parse(
+                    html_content, save_output=False, input_filename=filename
+                )
+                # Save result as .md in output_folder using FileUtils
+                file_utils = FileUtils()
+                output_file = os.path.join(
+                    output_folder, f"{os.path.splitext(filename)[0]}.md"
+                )
+                file_utils.save_output(data, input_filename=output_file)
+                processed += 1
+                console.print(f"[green]Processed:[/green] {filename} -> {output_file}")
+            except Exception as e:
+                console.print(f"[red]Failed to process {filename}: {e}[/red]")
+        console.print(f"[bold blue]Processed {processed} HTML files.[/bold blue]")
+        console.print(f"[bold green]Results saved in:[/bold green] {output_folder}")
+        return
     else:
         console.print("[red]Invalid choice[/red]")
         return
@@ -132,7 +173,12 @@ def execute():
     console.print(f"[bold blue]Input filename:[/bold blue] {input_filename}")
 
     parser = HtmlParser()
-    data = parser.parse(html_content, input_filename=input_filename)
+    data = parser.parse(html_content, save_output=False, input_filename=input_filename)
+
+    # Save output for single file/URL
+    file_utils = FileUtils()
+    file_utils.save_output(data, input_filename=input_filename)
+    console.print(f"[green]Saved output to output folder.[/green]")
 
     console.print(Panel("[bold green]Extracted Data:[/bold green]", expand=False))
     console.print(data)

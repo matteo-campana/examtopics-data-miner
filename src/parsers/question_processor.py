@@ -3,6 +3,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from src.parsers.image_handler import ImageHandler
+from tqdm import tqdm
 
 
 class QuestionProcessor:
@@ -15,7 +16,7 @@ class QuestionProcessor:
         markdown_output = []
         question_cards = soup.find_all("div", class_="exam-question-card")
 
-        for card in question_cards:
+        for card in tqdm(question_cards, desc="Processing questions", unit="question"):
             header_md = self._process_question_header(card)
             markdown_output.extend(header_md)
 
@@ -74,7 +75,7 @@ class QuestionProcessor:
                 markdown_lines.append("\n**Top 3 Discussion Comments:**")
                 for idx, comment in enumerate(top_comments, 1):
                     markdown_lines.append(
-                        f"\n> **{comment['author']}** ({comment['votes']} votes):\n> {comment['content']}"
+                        f"\n**{comment['author']}** ({comment['votes']} votes):\n {comment['content']}"
                     )
 
         return markdown_lines
