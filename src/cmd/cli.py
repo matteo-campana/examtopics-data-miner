@@ -10,6 +10,12 @@ from rich.panel import Panel
 from rich import box
 import re
 
+
+import warnings
+from urllib3.exceptions import InsecureRequestWarning
+
+warnings.simplefilter("ignore", InsecureRequestWarning)
+
 console = Console()
 
 
